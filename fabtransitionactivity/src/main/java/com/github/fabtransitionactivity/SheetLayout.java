@@ -21,8 +21,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import io.codetail.animation.SupportAnimator;
-
 public class SheetLayout extends FrameLayout {
 
     private static final int DEFAULT_ANIMATION_DURATION = 350;
@@ -181,11 +179,8 @@ public class SheetLayout extends FrameLayout {
         mFab.setTranslationY(0f);
 
         mFab.setAlpha(1f);
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            expandPreLollipop(x, y, startRadius, endRadius);
-        } else {
-            expandLollipop(x, y, startRadius, endRadius);
-        }
+
+        expand(x, y, startRadius, endRadius);
     }
 
     public void contractFab() {
@@ -207,11 +202,7 @@ public class SheetLayout extends FrameLayout {
         float endRadius = getFabSizePx() / 2;
         float startRadius = calculateStartRadius(x, y);
 
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            contractPreLollipop(x, y, startRadius, endRadius);
-        } else {
-            contractLollipop(x, y, startRadius, endRadius);
-        }
+        contract(x, y, startRadius, endRadius);
     }
 
     public boolean isFabExpanded() {
@@ -219,7 +210,7 @@ public class SheetLayout extends FrameLayout {
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    private void expandLollipop(int x, int y, float startRadius, float endRadius) {
+    private void expand(int x, int y, float startRadius, float endRadius) {
 
         Animator toolbarExpandAnim = ViewAnimationUtils.createCircularReveal(
                 mFabExpandLayout, x, y, startRadius, endRadius);
@@ -242,41 +233,8 @@ public class SheetLayout extends FrameLayout {
         toolbarExpandAnim.start();
     }
 
-    private void expandPreLollipop(int x, int y, float startRadius, float endRadius) {
-
-        SupportAnimator toolbarExpandAnim = io.codetail.animation.ViewAnimationUtils
-                .createCircularReveal(
-                        mFabExpandLayout, x, y, startRadius, endRadius);
-        toolbarExpandAnim.setDuration(animationDuration);
-        toolbarExpandAnim.addListener(new SupportAnimator.AnimatorListener() {
-            @Override
-            public void onAnimationStart() {
-                mFabExpandLayout.setAlpha(1f);
-            }
-
-            @Override
-            public void onAnimationEnd() {
-                //mFab.setAlpha(1f);
-                expandAnimationEnd();
-
-            }
-
-            @Override
-            public void onAnimationCancel() {
-
-            }
-
-            @Override
-            public void onAnimationRepeat() {
-
-            }
-        });
-
-        toolbarExpandAnim.start();
-    }
-
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    private void contractLollipop(int x, int y, float startRadius, float endRadius) {
+    private void contract(int x, int y, float startRadius, float endRadius) {
 
         Animator toolbarContractAnim = ViewAnimationUtils.createCircularReveal(
                 mFabExpandLayout, x, y, startRadius, endRadius);
@@ -287,37 +245,6 @@ public class SheetLayout extends FrameLayout {
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
                 contractAnimationEnd();
-            }
-        });
-
-        toolbarContractAnim.start();
-    }
-
-    private void contractPreLollipop(int x, int y, float startRadius, float endRadius) {
-
-        final SupportAnimator toolbarContractAnim = io.codetail.animation.ViewAnimationUtils
-                .createCircularReveal(mFabExpandLayout, x, y, startRadius, endRadius);
-        toolbarContractAnim.setDuration(animationDuration);
-
-        toolbarContractAnim.addListener(new SupportAnimator.AnimatorListener() {
-            @Override
-            public void onAnimationStart() {
-
-            }
-
-            @Override
-            public void onAnimationEnd() {
-                contractAnimationEnd();
-            }
-
-            @Override
-            public void onAnimationCancel() {
-
-            }
-
-            @Override
-            public void onAnimationRepeat() {
-
             }
         });
 
